@@ -42,19 +42,18 @@ app.get("/vodData/:vodID", async (req: Request, res: Response) => {
        * fails, so leaving this here for now.
        */
       case "string":
-        res.status(401).json({ message: "Bad token." })
-        break
+        return res.status(401).json({ message: "Bad token." })
       /**
        * Array - means that there is
        * segment data.
        */
       case "object":
-        res.status(200).json({ response })
+        return res.status(200).json({ response })
       /**
        * Undefined - no data found.
        */
       default:
-        res.sendStatus(404)
+        return res.sendStatus(404)
     }
   } catch (error) {
     console.error("Damn. ", error)
@@ -62,6 +61,8 @@ app.get("/vodData/:vodID", async (req: Request, res: Response) => {
   }
 })
 
-app.listen(PORT, () => console.log(`App now listening on port ${PORT}`))
+if (process.env.NODE_ENV !== "test") {
+  app.listen(PORT, () => console.log(`App now listening on port ${PORT}`))
+}
 
 export default app
