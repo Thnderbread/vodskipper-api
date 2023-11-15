@@ -10,3 +10,4 @@ dbConfig.ts
 seeder.ts
 SQLite.test.ts
 test-setup.ts
+settings.json
