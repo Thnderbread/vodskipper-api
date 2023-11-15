@@ -28,27 +28,13 @@
             "type": "node"
         },
         {
-            "name": "Debug Jest Tests",
+            "name": "vscode-jest-tests.v2",
             "type": "node",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "args": [
-                "-i"
-            ],
-            "runtimeArgs": [
-                "--inspect-brk",
-                "${workspaceFolder}/node_modules/jest/bin/jest.js",
-                "--runInBand"
-            ],
-            "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen",
-            "program": "${workspaceFolder}/node_modules/jest/bin/jest"
-        },
-        {
-            "name": "VSCode Test V2",
-            "type": "node",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
+            "env": {
+                "NODE_ENV": "test"
+            },
             "runtimeArgs": [
                 "--inspect-brk",
                 "${workspaceFolder}/node_modules/jest/bin/jest.js",
@@ -57,22 +43,5 @@
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen",
         },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Jest: current file",
-            //"env": { "NODE_ENV": "test" },
-            "program": "${workspaceFolder}/node_modules/.bin/jest",
-            "args": [
-                "${fileBasenameNoExtension}",
-                "--config",
-                "jest.config.js"
-            ],
-            "console": "integratedTerminal",
-            "disableOptimisticBPs": true,
-            "windows": {
-                "program": "${workspaceFolder}/node_modules/jest/bin/jest"
-            }
-        }
     ]
 }
