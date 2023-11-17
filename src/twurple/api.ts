@@ -1,10 +1,9 @@
 import logger from "../config/loggerConfig"
-import authProvider from "./refreshAuthProvider"
+import authProvider from "./appAuthProvider"
 import { isTwurpleError } from "./TwurpleError"
 import { ApiClient, type HelixVideo } from "@twurple/api"
 import type { MutedVodSegment, TwurpleError } from "../types"
 import type { HelixVideoMutedSegmentData } from "@twurple/api/lib/interfaces/endpoints/video.external"
-
 const apiClient = new ApiClient({ authProvider })
 
 /**
