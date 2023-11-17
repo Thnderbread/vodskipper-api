@@ -1,6 +1,5 @@
 .env
-node_modules
 dist
-data
 logs
+node_modules
 settings.json
