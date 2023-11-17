@@ -1,9 +1,9 @@
-import Database from "better-sqlite3"
+import { Database } from "better-sqlite3"
 import { SQLiteTokenDatabase } from "../src/model/SqliteTokenDb"
 import { clearDB, seedDB, MockData } from "./seeder"
 
 describe("SQLiteTokenDatabase", () => {
-  const db = require("better-sqlite3")(":memory:")
+  const db: Database = require("better-sqlite3")(":memory:")
   const tokenDb = new SQLiteTokenDatabase(db)
 
   beforeEach(() => {
