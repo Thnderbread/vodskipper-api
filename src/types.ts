@@ -1,4 +1,4 @@
-import { HelixVideoMutedSegmentData } from "@twurple/api/lib/interfaces/endpoints/video.external"
+import type { HelixVideoMutedSegmentData } from "@twurple/api/lib/interfaces/endpoints/video.external"
 
 export interface MutedVodSegment {
   id?: string
@@ -9,11 +9,11 @@ export interface MutedVodSegment {
 }
 
 export type FormatMutedSegmentsData = (
-  vod: HelixVideoMutedSegmentData[],
+  vod: HelixVideoMutedSegmentData[]
 ) => MutedVodSegment[]
 
 export type GetMutedSegmentsFunction = (
-  vodID: string,
+  vodID: string
 ) => Promise<MutedVodSegment[]> | undefined
 
 /**
@@ -37,4 +37,10 @@ export interface HelixVideoData {
   duration: string
   stream_id: string | null
   muted_segments: HelixVideoMutedSegmentData[] | null
+}
+
+export interface TwurpleError {
+  error: string
+  status: number
+  message: string
 }
