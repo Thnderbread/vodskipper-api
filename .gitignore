@@ -1,13 +1,6 @@
 .env
 node_modules
 dist
-twurple
-__mocks__
 data
 logs
-model
-dbConfig.ts
-seeder.ts
-SQLite.test.ts
-test-setup.ts
 settings.json
