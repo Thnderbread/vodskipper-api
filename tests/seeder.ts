@@ -33,7 +33,7 @@ const seedData: TokenModel = {
  */
 const staleData: TokenModel = {
   userId: "user1234",
-  accessToken: null,
+  accessToken: undefined,
   refreshToken: "niceRefreshToken123",
   expiresIn: 0,
   obtainmentTimestamp: 0,
@@ -72,7 +72,7 @@ export function seedDB(db: Database, seedData?: TokenModel): void {
         expiresIn INTEGER,
         obtainmentTimestamp INTEGER,
         scope TEXT,
-        refreshToken VARCHAR(255))`,
+        refreshToken VARCHAR(255))`
   )
   createTableStmt.run()
 
@@ -80,7 +80,7 @@ export function seedDB(db: Database, seedData?: TokenModel): void {
     const seedDataStmt = db.prepare(
       `INSERT INTO tokens
     (userId, accessToken, refreshToken, expiresIn, obtainmentTimestamp, scope)
-    VALUES (?, ?, ?, ?, ?, ?)`,
+    VALUES (?, ?, ?, ?, ?, ?)`
     )
     seedDataStmt.run(
       seedData.userId,
@@ -88,7 +88,7 @@ export function seedDB(db: Database, seedData?: TokenModel): void {
       seedData.refreshToken,
       seedData.expiresIn,
       seedData.obtainmentTimestamp,
-      seedData.scope?.join(" "),
+      seedData.scope?.join(" ")
     )
   }
 }
