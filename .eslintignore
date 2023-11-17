@@ -1,0 +1,6 @@
+data
+logs
+dist
+tests
+node_modules
+jest.config.js
