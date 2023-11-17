@@ -1,4 +1,4 @@
-jest.mock("../src/config/dbConfig", () => {
+jest.mock("better-sqlite3", () => {
   return {
     Database: jest.fn().mockImplementation(() => {
       return {
