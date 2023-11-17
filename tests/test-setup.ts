@@ -1,6 +1,4 @@
-import path from "path"
 import knex, { Knex } from "knex"
-import Database from "better-sqlite3"
 import { GenericContainer, StartedTestContainer } from "testcontainers"
 import { SQLiteTokenDatabase } from "../src/model/SqliteTokenDb"
 
@@ -19,7 +17,7 @@ export interface ContainerInstance {
  */
 export async function startContainer(): Promise<ContainerInstance> {
   const container = await new GenericContainer("sqlite")
-    .withExposedPorts(8080)
+    .withExposedPorts(8089)
     .start()
 
   const db = knex<SQLiteTokenDatabase>({
@@ -40,7 +38,7 @@ export async function startContainer(): Promise<ContainerInstance> {
  * @param instance Existing ContainerInstance.
  */
 export async function stopContainer(
-  instance: ContainerInstance,
+  instance: ContainerInstance
 ): Promise<void> {
   await instance.container.stop()
   await instance.db.destroy()
