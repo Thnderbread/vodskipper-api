@@ -1,11 +1,11 @@
 import cors from "cors"
-import dotenv from "dotenv" // for caching?
-import { MutedVodSegment } from "./types"
+import logger from "./config/loggerConfig"
+import { MemClient } from "./config/MemClient"
 import { getMutedVodSegmentsFromTwitch } from "./twurple/api"
-import express, { Express, Request, Response } from "express"
+import express, { type Express, type Request, type Response } from "express"
 
 const app: Express = express()
-const PORT = process.env.PORT || 8080
+const PORT = process.env.PORT ?? 8080
 
 const TWITCHDOMAIN = "twitch.tv/videos/*"
 
@@ -14,55 +14,53 @@ app.use(
     origin: TWITCHDOMAIN,
     methods: "GET",
     credentials: false,
-  }),
+  })
 )
 
 app.use(express.json())
 
-app.get("/vodData/:vodID", async (req: Request, res: Response) => {
+app.get("/vodData/:vodID", (req: Request, res: Response) => {
   if (req.method !== "GET") {
-    return res.sendStatus(405)
+    res.sendStatus(405)
   }
 
-  try {
-    const { vodID } = req.params
+  const { vodID } = req.params
 
-    const response: MutedVodSegment[] | string =
-      await getMutedVodSegmentsFromTwitch(vodID)
-
-    /**
-     * cache that shit, key will be vod id, expiry time of 1 week? 2?
-     * cache only if mutedSegmentData is not undefined
-     */
-
-    switch (typeof response) {
-      /**
-       * Denotes a bad token. Not sure
-       * What happens if a twurple request
-       * fails, so leaving this here for now.
-       */
-      case "string":
+  getMutedVodSegmentsFromTwitch(vodID)
+    .then((response) => {
+      // A bad token
+      if (typeof response === "string") {
         return res.status(401).json({ message: "Bad token." })
-      /**
-       * Array - means that there is
-       * segment data.
-       */
-      case "object":
+      } else if (Array.isArray(response)) {
+        // Cache the data before returning it
+        MemClient.set(
+          vodID,
+          JSON.stringify(response),
+          { expires: 604800 },
+          (error) => {
+            if (error !== null) {
+              logger.error(`Couldn't cache data for ${vodID}:`, error)
+              return
+            }
+            logger.info(`Cached data for ${vodID}.`)
+          }
+        )
         return res.status(200).json({ response })
-      /**
-       * Undefined - no data found.
-       */
-      default:
+      } else {
+        // No data found
         return res.sendStatus(404)
-    }
-  } catch (error) {
-    console.error("Damn. ", error)
-    res.sendStatus(500)
-  }
+      }
+    })
+    .catch((error) => {
+      logger.error("Damn. ", error)
+      return res.sendStatus(500)
+    })
 })
 
 if (process.env.NODE_ENV !== "test") {
-  app.listen(PORT, () => console.log(`App now listening on port ${PORT}`))
+  app.listen(PORT, () => {
+    console.log(`App now listening on port ${PORT}`)
+  })
 }
 
 export default app
