@@ -1,6 +1,6 @@
 import cors from "cors"
 import logger from "./config/loggerConfig"
-import { MemClient } from "./config/MemClient"
+// import { MemClient } from "./config/MemClient"
 import { getMutedVodSegmentsFromTwitch } from "./twurple/api"
 import express, { type Express, type Request, type Response } from "express"
 
@@ -29,29 +29,33 @@ app.get("/vodData/:vodID", (req: Request, res: Response) => {
   getMutedVodSegmentsFromTwitch(vodID)
     .then((response) => {
       // A bad token
-      if (typeof response === "string") {
-        return res.status(401).json({ message: "Bad token." })
-      } else if (Array.isArray(response)) {
+      const [data, error] = response
+      if (error !== null) {
+        throw error
+      }
+      if (data !== undefined && data.length > 0) {
         // Cache the data before returning it
-        MemClient.set(
-          vodID,
-          JSON.stringify(response),
-          { expires: 604800 },
-          (error) => {
-            if (error !== null) {
-              logger.error(`Couldn't cache data for ${vodID}:`, error)
-              return
-            }
-            logger.info(`Cached data for ${vodID}.`)
-          }
-        )
-        return res.status(200).json({ response })
+        // MemClient.set(
+        //   vodID,
+        //   JSON.stringify(response),
+        //   { expires: 604800 },
+        //   (error) => {
+        //     if (error !== null) {
+        //       logger.error(`Couldn't cache data for ${vodID}:`, error)
+        //       return
+        //     }
+        //     logger.info(`Cached data for ${vodID}.`)
+        //   }
+        // )
+        return res.status(200).json({ segments: data })
       } else {
-        // No data found
         return res.sendStatus(404)
       }
     })
     .catch((error) => {
+      if (error.statusCode === 404) {
+        return res.sendStatus(404)
+      }
       logger.error("Damn. ", error)
       return res.sendStatus(500)
     })
@@ -59,7 +63,7 @@ app.get("/vodData/:vodID", (req: Request, res: Response) => {
 
 if (process.env.NODE_ENV !== "test") {
   app.listen(PORT, () => {
-    console.log(`App now listening on port ${PORT}`)
+    logger.info(`App now listening on port ${PORT}`)
   })
 }
 
