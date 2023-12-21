@@ -67,7 +67,7 @@ function formatCurrentTime(seconds: number): string {
  * @param mutedSegments The muted segments array
  * received from Twitch.
  */
-export function formatMutedSegmentsData(
+function formatMutedSegmentsData(
   mutedSegments: HelixVideoMutedSegmentData[]
 ): MutedVodSegment[] {
   // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
