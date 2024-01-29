@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import dotenv from "dotenv"
-import { StaticAuthProvider } from "@twurple/auth"
-import { ApiClient } from "@twurple/api/lib"
 import logger from "../config/loggerConfig"
+import { StaticAuthProvider } from "@twurple/auth"
 
 dotenv.config()
 

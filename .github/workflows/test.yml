@@ -7,6 +7,10 @@ on:
 
 jobs:
   test:
+    env:
+      CLIENT_ID: ${{ secrets.CLIENT_ID }}
+      ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
