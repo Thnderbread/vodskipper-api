@@ -16,10 +16,6 @@ jobs:
     runs-on: ubuntu-latest
     if: github.actor == 'dependabot[bot]'
 
-    env:
-      CLIENT_ID: ${{ secrets.CLIENT_ID }}
-      ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-
     steps:
       - name: Fetch PR metadata
         id: metadata
@@ -28,6 +24,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Wait for PR CI
+        env:
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         # Don't merge updates to GitHub Actions versions automatically.
         # (Some repos may wish to limit by version range (major/minor/patch), or scope (dep vs dev-dep), too.)
         if: contains(steps.metadata.outputs.package-ecosystem, 'npm')
