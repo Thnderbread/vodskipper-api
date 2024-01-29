@@ -1,41 +1,50 @@
-name: Dependabot reviewer
+# this workflow merges requests from Dependabot if tests are passing
+# ref https://docs.github.com/en/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions
+# and https://github.com/dependabot/fetch-metadata
+name: Auto-merge
 
+# `pull_request_target` means this uses code in the base branch, not the PR.
 on: pull_request_target
 
+# Dependabot PRs' tokens have read permissions by default and thus we must enable write permissions.
 permissions:
-  pull-requests: write
   contents: write
+  pull-requests: write
 
 jobs:
-  review-dependabot-pr:
+  dependencies:
     runs-on: ubuntu-latest
-    if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' }}
+    if: github.actor == 'dependabot[bot]'
+
     steps:
-      - name: Dependabot metadata
-        id: dependabot-metadata
-        uses: dependabot/fetch-metadata@v1.3.1
-      - name: Enable auto-merge for Dependabot PRs
-        run: gh pr merge --auto --merge "$PR_URL"
+      - name: Fetch PR metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v1.3.5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Wait for PR CI
         env:
-          PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      - name: Approve patch and minor updates
-        if: ${{steps.dependabot-metadata.outputs.update-type == 'version-update:semver-patch' || steps.dependabot-metadata.outputs.update-type == 'version-update:semver-minor'}}
-        run: gh pr review $PR_URL --approve -b "I'm **approving** this pull request because **it includes a patch or minor update**"
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        # Don't merge updates to GitHub Actions versions automatically.
+        # (Some repos may wish to limit by version range (major/minor/patch), or scope (dep vs dev-dep), too.)
+        if: contains(steps.metadata.outputs.package-ecosystem, 'npm')
+        uses: lewagon/wait-on-check-action@v1.3.3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 30 # seconds
+          running-workflow-name: dependencies # wait for all checks except this one
+          allowed-conclusions: success # all other checks must pass, being skipped or cancelled is not sufficient
+
+      - name: Auto-merge dependabot PRs
+        # Don't merge updates to GitHub Actions versions automatically.
+        # (Some repos may wish to limit by version range (major/minor/patch), or scope (dep vs dev-dep), too.)
+        if: contains(steps.metadata.outputs.package-ecosystem, 'npm')
         env:
-          PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      - name: Approve major updates of development dependencies
-        if: ${{steps.dependabot-metadata.outputs.update-type == 'version-update:semver-major' && steps.dependabot-metadata.outputs.dependency-type == 'direct:development'}}
-        run: gh pr review $PR_URL --approve -b "I'm **approving** this pull request because **it includes a major update of a dependency used only in development**"
-        env:
-          PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      - name: Comment on major updates of non-development dependencies
-        if: ${{steps.dependabot-metadata.outputs.update-type == 'version-update:semver-major' && steps.dependabot-metadata.outputs.dependency-type == 'direct:production'}}
-        run: |
-          gh pr comment $PR_URL --body "I'm **not approving** this PR because **it includes a major update of a dependency used in production**"
-          gh pr edit $PR_URL --add-label "requires-manual-qa"
-        env:
-          PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # The "auto" flag will only merge once all of the target branch's required checks
+        # are met. Configure those in the "branch protection" settings for each repo.
+        run: gh pr merge --auto --squash "$PR_URL"
