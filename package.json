@@ -9,8 +9,8 @@
     "clean": "rimraf --glob dist",
     "build": "npx tsc",
     "dev": "cross-env NODE_ENV=dev nodemon ./src/server.ts",
-    "start": "run clean && cross-env LOG_OPTION=file && node dist/server.js",
-    "test": "jest"
+    "start": "run clean && cross-env LOG_OPTION=file && NODE_ENV=prod && node dist/server.js",
+    "test": "NODE_ENV=test && jest"
   },
   "author": "Thnderbread",
   "license": "ISC",
@@ -45,7 +45,6 @@
   "dependencies": {
     "@twurple/api": "^7.0.4",
     "@twurple/auth-ext": "^7.0.4",
-    "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "memjs": "^1.3.1",
