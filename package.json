@@ -10,7 +10,7 @@
     "build": "npx tsc",
     "dev": "cross-env NODE_ENV=dev nodemon ./src/server.ts",
     "start": "run clean && cross-env LOG_OPTION=file && NODE_ENV=prod && node dist/server.js",
-    "test": "NODE_ENV=test && jest"
+    "test": "jest"
   },
   "author": "Thnderbread",
   "license": "ISC",
