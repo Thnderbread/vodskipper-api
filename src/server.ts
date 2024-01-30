@@ -27,15 +27,9 @@ if (process.env.NODE_ENV === "dev") {
     logger.info(`[server]: HTTPS server listening at https://localhost:${PORT}`)
   })
 } else if (process.env.NODE_ENV === "prod") {
-  const options = {
-    key: readFileSync(path.join(__dirname, "localhost-key.pem")),
-    cert: readFileSync(path.join(__dirname, "localhost.pem")),
-  }
-
-  const server = createServer(options, app)
-
-  server.listen(PORT, () => {
-    logger.info(`[server]: HTTPS server listening at ${PORT}`)
+  app.listen(PORT, () => {
+    logger.info(`[server]: HTTPS server started at ${PORT} at ${new Date()}`)
+    console.log(`[server]: HTTPS server listening on port ${PORT}`)
   })
 }
 
