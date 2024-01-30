@@ -8,7 +8,7 @@
     "lint": "eslint --ignore-path .eslintignore --ext .js,.ts .",
     "clean": "rimraf --glob dist",
     "build": "npx tsc",
-    "dev": "cross-env NODE_ENV=dev nodemon ./src/server.ts",
+    "dev": "cross-env NODE_ENV=dev tsnd --respawn ./src/server.ts",
     "start": "run clean && cross-env LOG_OPTION=file && NODE_ENV=prod && node dist/server.js",
     "test": "jest"
   },
@@ -39,7 +39,7 @@
     "rimraf": "^5.0.5",
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.1",
-    "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^5.2.2"
   },
   "dependencies": {

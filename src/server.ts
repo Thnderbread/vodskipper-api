@@ -24,7 +24,7 @@ if (process.env.NODE_ENV === "dev") {
   const server = createServer(options, app)
 
   server.listen(PORT, () => {
-    logger.info(`App listening on HTTPS server at ${PORT}`)
+    logger.info(`[server]: HTTPS server listening at https://localhost:${PORT}`)
   })
 } else if (process.env.NODE_ENV === "prod") {
   const options = {
@@ -35,7 +35,7 @@ if (process.env.NODE_ENV === "dev") {
   const server = createServer(options, app)
 
   server.listen(PORT, () => {
-    logger.info(`App listening on HTTPS server at ${PORT}`)
+    logger.info(`[server]: HTTPS server listening at ${PORT}`)
   })
 }
 
