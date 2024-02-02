@@ -1,4 +1,5 @@
 import path from "path"
+import cors from "cors"
 import { readFileSync } from "fs"
 import { createServer } from "https"
 import logger from "./config/loggerConfig"
@@ -8,6 +9,14 @@ import handleMutedSegmentsRequest from "./controllers/mutedSegmentsController"
 
 const app: Express = express()
 const PORT = process.env.PORT ?? 8000
+
+app.use(
+  cors({
+    origin: "*",
+    methods: "GET",
+    credentials: false,
+  })
+)
 
 app.use(express.json())
 
@@ -28,7 +37,9 @@ if (process.env.NODE_ENV === "dev") {
   })
 } else if (process.env.NODE_ENV === "prod") {
   app.listen(PORT, () => {
-    logger.info(`[server]: HTTPS server started at ${PORT} at ${new Date()}`)
+    logger.info(
+      `[server]: HTTPS server started at ${PORT} on ${new Date().toISOString()}`
+    )
     console.log(`[server]: HTTPS server listening on port ${PORT}`)
   })
 }
