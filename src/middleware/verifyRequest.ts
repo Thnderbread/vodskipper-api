@@ -20,17 +20,22 @@ function validateRequest(
   const { vodID } = req.params
   const { origin } = req.headers
   if (!vodIdRegex.test(vodID)) {
-    logger.warn(`Rejected request from ${origin} because of invalid vod id.`)
+    logger.warn(
+      `Rejected request from origin ${origin} because of invalid vod id.`
+    )
     res.sendStatus(404)
     return
   } else if (req.method !== "GET") {
     logger.warn(
-      `Rejected request from ${origin} due to invalid request method: ${req.method}`
+      `Rejected request from origin ${origin} due to invalid request method: ${req.method}`
     )
 
     res.sendStatus(405)
     return
   } else if (req.headers.host !== "www.twitch.tv") {
+    logger.warn(
+      `Rejected request from host${req.headers.host} due to invalid host.`
+    )
     res.sendStatus(400)
     return
   }
