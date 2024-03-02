@@ -10,7 +10,6 @@
     "build": "npx tsc",
     "dev": "cross-env NODE_ENV=dev tsnd --respawn ./src/server.ts",
     "start": "npm run clean && npm run build && cross-env NODE_ENV=prod node dist/server.js",
-    "start:t": "npm run clean && npm run build && cross-env NODE_ENV=token node dist/server.js",
     "test": "jest"
   },
   "author": "Thnderbread",
@@ -23,7 +22,6 @@
     "@types/node": "^20.8.10",
     "@types/supertest": "^2.0.16",
     "@types/uuid": "^9.0.7",
-    "@types/winston": "^2.4.4",
     "@typescript-eslint/eslint-plugin": "^6.11.0",
     "@typescript-eslint/parser": "^6.11.0",
     "cross-env": "^7.0.3",
