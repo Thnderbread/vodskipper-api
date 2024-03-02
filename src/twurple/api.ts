@@ -46,12 +46,15 @@ function formatCurrentTime(seconds: number): string {
    * construct a string based off of them, and return that.
    */
   if (seconds < 60) {
+    // under a minute
     return beautifyNumber(seconds)
   } else if (seconds < 3600) {
+    // under an hour
     const minutes = beautifyNumber(Math.floor(seconds / 60))
     const remainingSeconds = beautifyNumber(seconds % 60)
     return `${minutes}:${remainingSeconds}.`
   } else {
+    // over an hour
     const hours = beautifyNumber(Math.floor(seconds / 3600))
     const remainingMinutes = beautifyNumber(Math.floor((seconds % 3600) / 60))
     const remainingSeconds = beautifyNumber(seconds % 60)
@@ -81,12 +84,11 @@ function formatMutedSegmentsData(
       }
       return formattedSegment
     })
-    .sort()
+    .sort((a, b) => a.startingOffset - b.startingOffset)
 }
 
 /**
  * Given a vodID, attempt to retrieve the VOD's muted segments data.
- *
  *
  * @param vodID String of the vod's id.
  * @returns A formatted array of all the muted segments in the vod w/
@@ -97,29 +99,44 @@ function formatMutedSegmentsData(
 export async function getMutedVodSegmentsFromTwitch(
   vodID: string
 ): Promise<MutedSegmentResponse> {
-  logger.debug(`Fetching muted segments for ${vodID}`)
-
-  // let mutedSegments: HelixVideoMutedSegmentData[] | undefined
+  logger.info(`Fetching muted segments for ${vodID}`)
+  /**
+   * The error to be thrown if the entire function runs
+   * without either obtaining any segments or throwing another error.
+   */
+  let errorState = new Error("No segments found and no other errors triggered.")
+  let dataState: MutedVodSegment[] = []
+  let successState = false
 
   try {
     const vod = await apiClient.videos.getVideoById(vodID)
     const mutedSegments = vod?.mutedSegmentData
 
     if (mutedSegments !== undefined) {
-      return [formatMutedSegmentsData(mutedSegments), null]
+      successState = true
+      dataState = formatMutedSegmentsData(mutedSegments)
     }
   } catch (error: unknown) {
+    errorState = error as Error
     if (isTwurpleError(error)) {
       const errorObj: TwurpleErrorType = JSON.parse(error.body)
       if (errorObj.status === 404) {
-        return [undefined, new TwurpleError(404, "data not found.")]
-      } else if (errorObj.status === 401) {
-        return [undefined, new TwurpleError(401, errorObj.message)]
+        errorState = new TwurpleError(404, "No vod found.")
       }
-      logger.error(`Twurple Error: ${error.body}`)
-    } else {
-      throw error
+    }
+    if ((error as Error).message.includes("Invalid token supplied")) {
+      // Maybe some kind of email thing to myself to handle this?
+      errorState = new Error("Expired token.")
     }
   }
-  return [undefined, null]
+  if (successState) {
+    return {
+      success: successState,
+      data: dataState,
+    }
+  }
+  return {
+    success: successState,
+    error: errorState,
+  }
 }

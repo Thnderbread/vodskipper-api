@@ -9,6 +9,9 @@ jobs:
   test:
     env:
       CLIENT_ID: ${{ secrets.CLIENT_ID }}
+      REDIS_PASS: ${{ secrets.REDIS_PASS }}
+      REDIS_HOST: ${{ secrets.REDIS_HOST }}
+      REDIS_PORT: ${{ secrets.REDIS_PORT }}
       ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
 
     runs-on: ubuntu-latest
