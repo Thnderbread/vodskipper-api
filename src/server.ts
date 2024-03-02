@@ -2,25 +2,22 @@ import path from "path"
 import cors from "cors"
 import { readFileSync } from "fs"
 import { createServer } from "https"
+import corsOpts from "./getCorsOpts"
 import logger from "./config/loggerConfig"
 import express, { type Express } from "express"
 import requestLogger from "./middleware/requestLogger"
+import validateRequest from "./middleware/verifyRequest"
 import handleMutedSegmentsRequest from "./controllers/mutedSegmentsController"
 
 const app: Express = express()
 const PORT = process.env.PORT ?? 8000
 
-app.use(
-  cors({
-    origin: "*",
-    methods: "GET",
-    credentials: false,
-  })
-)
+// @ts-expect-error works fine, not sure what the issue is
+app.use(cors(corsOpts))
 
 app.use(express.json())
 
-app.get("/vodData/:vodID", handleMutedSegmentsRequest)
+app.use("/vods/muted/:vodID", validateRequest, handleMutedSegmentsRequest)
 
 app.use(requestLogger)
 
