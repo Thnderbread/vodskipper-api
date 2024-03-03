@@ -34,7 +34,7 @@ function validateRequest(
     return
   } else if (req.headers.host !== "www.twitch.tv") {
     logger.warn(
-      `Rejected request from host${req.headers.host} due to invalid host.`
+      `Rejected request from host ${req.headers.host} due to invalid host.`
     )
     res.sendStatus(400)
     return
