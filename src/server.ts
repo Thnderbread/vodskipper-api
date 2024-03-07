@@ -35,9 +35,9 @@ if (process.env.NODE_ENV === "dev") {
 } else if (process.env.NODE_ENV === "prod") {
   app.listen(PORT, () => {
     logger.info(
-      `[server]: HTTPS server started at ${PORT} on ${new Date().toISOString()}`
+      `[server]: HTTP server started listening on  
+      port ${PORT} on ${new Date().toISOString()}`
     )
-    console.log(`[server]: HTTPS server listening on port ${PORT}`)
   })
 }
 

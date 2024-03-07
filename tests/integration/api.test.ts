@@ -23,9 +23,9 @@ describe("API Integration Tests", () => {
   })
 
   it("should return a 200 status and segment data for GET /vods/muted/:id when the requested vod is found", async () => {
-    const response: Response = await request(app)
-      .get(`/vods/muted/${MUTEDVODID}`)
-      .set("host", "www.twitch.tv")
+    const response: Response = await request(app).get(
+      `/vods/muted/${MUTEDVODID}`
+    )
     await RedisClient.del(MUTEDVODID)
     expect(response.status).toBe(200)
     expect(response.body.segments).toBeInstanceOf(Array)
@@ -33,19 +33,14 @@ describe("API Integration Tests", () => {
   })
 
   it("should cache the response for a segment after the request.", async () => {
-    const mutedResponse = await request(app)
-      .get(`/vods/muted/${MUTEDVODID}`)
-      .set("host", "www.twitch.tv")
+    const mutedResponse = await request(app).get(`/vods/muted/${MUTEDVODID}`)
     const mutedSegments = mutedResponse.body.segments
     const mutedCached = await RedisClient.get(MUTEDVODID)
     await RedisClient.del(MUTEDVODID)
     assert.ok(mutedCached !== null)
     const mutedParsed = JSON.parse(mutedCached)
 
-    await request(app)
-      .get(`/vods/muted/${UNMUTEDVODID}`)
-      .set("host", "www.twitch.tv")
-
+    await request(app).get(`/vods/muted/${UNMUTEDVODID}`)
     const unmutedCached = await RedisClient.get(UNMUTEDVODID)
     await RedisClient.del(UNMUTEDVODID)
     if (unmutedCached === null) {
@@ -58,28 +53,20 @@ describe("API Integration Tests", () => {
   })
 
   it("should return a 404 status for GET /vods/muted/:id when the requested vod is not found", async () => {
-    const response = await request(app)
-      .get(`/vods/muted/${INVALIDVODID}`)
-      .set("host", "www.twitch.tv")
+    const response = await request(app).get(`/vods/muted/${INVALIDVODID}`)
 
     expect(response.status).toBe(404)
   })
 
   it("should return a 404 status for GET /vods/muted/:id when the requested vod has no muted segments", async () => {
-    const response = await request(app)
-      .get(`/vods/muted/${UNMUTEDVODID}`)
-      .set("host", "www.twitch.tv")
+    const response = await request(app).get(`/vods/muted/${UNMUTEDVODID}`)
     await RedisClient.del(UNMUTEDVODID)
     expect(response.status).toBe(404)
   })
 
   it("should return a 404 status for invalid vodID parameters", async () => {
-    const firstResponse = await request(app)
-      .get(`/vods/muted/''`)
-      .set("host", "www.twitch.tv")
-    const secondResponse = await request(app)
-      .get(`/vods/muted/${true}`)
-      .set("host", "www.twitch.tv")
+    const firstResponse = await request(app).get(`/vods/muted/''`)
+    const secondResponse = await request(app).get(`/vods/muted/${true}`)
 
     expect(firstResponse.status).toBe(404)
     expect(secondResponse.status).toBe(404)
@@ -92,13 +79,5 @@ describe("API Integration Tests", () => {
       .set("host", "www.twitch.tv")
 
     expect(response.status).toBe(405)
-  })
-
-  it("should return a 400 status for a request from an invalid host", async () => {
-    const response = await request(app)
-      .get(`/vods/muted/${MUTEDVODID}`)
-      .set("host", "www.google.com")
-
-    expect(response.status).toBe(400)
   })
 })
