@@ -65,7 +65,7 @@ describe("API Integration Tests", () => {
   })
 
   it("should return a 404 status for invalid vodID parameters", async () => {
-    const firstResponse = await request(app).get(`/vods/muted/''`)
+    const firstResponse = await request(app).get(`/vods/muted/`)
     const secondResponse = await request(app).get(`/vods/muted/${true}`)
 
     expect(firstResponse.status).toBe(404)
@@ -73,11 +73,12 @@ describe("API Integration Tests", () => {
   })
 
   it("should return a 405 status for a POST request", async () => {
-    const response = await request(app)
-      .post(`/vods/muted/${MUTEDVODID}`)
-      .send()
-      .set("host", "www.twitch.tv")
-
+    const response = await request(app).post(`/vods/muted/${MUTEDVODID}`).send()
     expect(response.status).toBe(405)
+  })
+
+  it("should return a 404 status for requests made to unmatched endpoints", async () => {
+    const response = await request(app).get("/")
+    expect(response.status).toBe(404)
   })
 })

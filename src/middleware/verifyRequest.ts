@@ -10,12 +10,6 @@ function validateRequest(
   res: Response,
   next: NextFunction
 ): void {
-  const env = process.env.NODE_ENV ?? "dev"
-  if (env === "dev") {
-    next()
-    return
-  }
-
   const vodIdRegex = /\d{8,}/
   const { vodID } = req.params
   const { origin } = req.headers

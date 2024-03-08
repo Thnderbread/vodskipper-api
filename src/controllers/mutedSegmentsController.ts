@@ -30,7 +30,6 @@ function handleMutedSegmentsRequest(
         res.sendStatus(404)
       }
       next()
-      next()
     })
     .catch((error) => {
       logger.error(error.message)
