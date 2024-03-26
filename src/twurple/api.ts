@@ -1,5 +1,4 @@
 import { ApiClient } from "@twurple/api"
-import logger from "../config/loggerConfig"
 // import authProvider from "./appAuthProvider"
 import authProvider from "./staticAuthProvider"
 import { isTwurpleError } from "./TwurpleError"
@@ -99,7 +98,6 @@ function formatMutedSegmentsData(
 export async function getMutedVodSegmentsFromTwitch(
   vodID: string
 ): Promise<MutedSegmentResponse> {
-  logger.info(`Fetching muted segments for ${vodID}`)
   /**
    * The error to be thrown if the entire function runs
    * without either obtaining any segments or throwing another error.

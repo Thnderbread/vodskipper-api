@@ -10,11 +10,9 @@ function validateOrigin(origin: string): boolean {
 const corsOptsProd = {
   origin: (origin: string, callback: CallableFunction) => {
     if (validateOrigin(origin)) {
-      console.log("Request Confirmed valid by CORS.")
       callback(null, true)
     } else {
-      console.log("Request rejected by CORS.")
-      callback(new Error("Not allowed by CORS."))
+      callback(new Error(`Origin "${origin}" is not allowed by CORS.`))
     }
   },
   methods: "GET",
