@@ -5,6 +5,7 @@ import express, { type Express } from "express"
 import requestLogger from "./middleware/requestLogger"
 import validateRequest from "./middleware/verifyRequest"
 import handleMutedSegmentsRequest from "./controllers/mutedSegmentsController"
+import { searchCache } from "./middleware/searchCache"
 
 const app: Express = express()
 const PORT = process.env.PORT ?? 8000
@@ -16,12 +17,13 @@ app.use(express.json())
 app.use(
   "/vods/muted/:vodID",
   validateRequest,
+  searchCache,
   handleMutedSegmentsRequest,
   requestLogger
 )
 app.all(
   "*",
-  (req, res, next) => {
+  (_, res, next) => {
     res.sendStatus(404)
     next()
   },

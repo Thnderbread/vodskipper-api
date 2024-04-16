@@ -9,6 +9,11 @@ function handleMutedSegmentsRequest(
   res: Response,
   next: NextFunction
 ): void {
+  // if vod stuff was found in cache
+  if (res.locals.handled === true) {
+    next()
+    return
+  }
   const { vodID } = req.params
   getMutedVodSegmentsFromTwitch(vodID)
     .then(async ({ success, data, error }) => {
@@ -23,7 +28,15 @@ function handleMutedSegmentsRequest(
         return
       }
 
-      await RedisClient.set(vodID, JSON.stringify(data))
+      try {
+        logger.info("Trying to set stuff")
+        await RedisClient.set(vodID, JSON.stringify(data))
+      } catch (error) {
+        logger.error(
+          "Couldn't set value in cache due to error: ",
+          (error as Error).message
+        )
+      }
       if (data.length > 0) {
         res.status(200).json({ segments: data })
       } else {
@@ -32,7 +45,7 @@ function handleMutedSegmentsRequest(
       next()
     })
     .catch((error) => {
-      logger.error(error.message)
+      logger.error("Unhandled error: ", error.message)
       res.sendStatus(500)
       next()
     })

@@ -1,12 +1,12 @@
+import assert from "assert"
 import request from "supertest"
 import app from "../../src/server"
 import { MutedVodSegment } from "../../src/types"
 import RedisClient from "../../src/config/RedisClient"
-import assert from "assert"
 
-const MUTEDVODID = "1780240732"
+const MUTEDVODID = "1780317987"
 const INVALIDVODID = "1234756"
-const UNMUTEDVODID = "2050655749"
+const UNMUTEDVODID = "2111779905"
 
 interface Response {
   status: number

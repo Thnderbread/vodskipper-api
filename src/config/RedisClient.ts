@@ -6,7 +6,7 @@ config()
 const RedisClient = createClient({
   password: process.env.REDIS_PASS,
   socket: {
-    connectTimeout: 50000,
+    connectTimeout: 50,
     host: process.env.REDIS_HOST,
     port: parseInt(process.env.REDIS_PORT ?? ""),
   },
