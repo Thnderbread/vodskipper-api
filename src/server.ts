@@ -2,10 +2,10 @@ import cors from "cors"
 import corsOpts from "./getCorsOpts"
 import logger from "./config/loggerConfig"
 import express, { type Express } from "express"
+import searchCache from "./middleware/searchCache"
 import requestLogger from "./middleware/requestLogger"
 import validateRequest from "./middleware/verifyRequest"
 import handleMutedSegmentsRequest from "./controllers/mutedSegmentsController"
-import { searchCache } from "./middleware/searchCache"
 
 const app: Express = express()
 const PORT = process.env.PORT ?? 8000
@@ -44,8 +44,3 @@ if (process.env.NODE_ENV === "dev") {
 }
 
 export default app
-
-/**
- * curl "https://api-vodskipper.koyeb.app/vods/muted/" \
- * -H "Origin: chrome-extension://something"
- */

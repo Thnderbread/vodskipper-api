@@ -29,7 +29,6 @@ function handleMutedSegmentsRequest(
       }
 
       try {
-        logger.info("Trying to set stuff")
         await RedisClient.set(vodID, JSON.stringify(data))
       } catch (error) {
         logger.error(

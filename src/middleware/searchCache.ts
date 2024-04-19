@@ -7,25 +7,22 @@ import type { Request, Response, NextFunction } from "express"
  * the VOD data. If not found, continues to the controller
  * to contact the Twitch API for the VOD data.
  */
-export function searchCache(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void {
+function searchCache(req: Request, res: Response, next: NextFunction): void {
   const { vodID } = req.params
-  logger.info("Trying to get stuff")
   RedisClient.get(vodID)
     .then((segments) => {
       if (segments !== null) {
+        // signaling the main fetch function doesn't need to operate
         res.locals.handled = true
         res.status(200).json({ segments: JSON.parse(segments) })
         next()
         return
       }
-      // signaling the main function doesn't need to operate
       next()
     })
     .catch((error) => {
       logger.error("Failed to set value in cache: ", error)
     })
 }
+
+export default searchCache
