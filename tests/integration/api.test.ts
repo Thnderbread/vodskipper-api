@@ -19,7 +19,7 @@ describe("API Integration Tests", () => {
   jest.setTimeout(60_000)
 
   afterAll(() => {
-    RedisClient.disconnect()
+    RedisClient.quit()
   })
 
   it("should return a 200 status and segment data for GET /vods/muted/:id when the requested vod is found", async () => {

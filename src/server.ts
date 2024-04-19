@@ -6,6 +6,7 @@ import searchCache from "./middleware/searchCache"
 import requestLogger from "./middleware/requestLogger"
 import validateRequest from "./middleware/verifyRequest"
 import handleMutedSegmentsRequest from "./controllers/mutedSegmentsController"
+import RedisClient from "./config/RedisClient"
 
 const app: Express = express()
 const PORT = process.env.PORT ?? 8000
@@ -42,5 +43,10 @@ if (process.env.NODE_ENV === "dev") {
     )
   })
 }
+
+process.on("SIGINT", () => {
+  logger.warn("[server]: Exiting due to SIGINT signal")
+  RedisClient.disconnect()
+})
 
 export default app

@@ -1,6 +1,7 @@
 import Redis from "ioredis"
 import { config } from "dotenv"
 import logger from "./loggerConfig"
+import { clearInterval } from "timers"
 
 config()
 
@@ -16,7 +17,7 @@ const RedisClient = new Redis({
  * keep the connection alive.
  */
 export function pingRedis(): NodeJS.Timeout {
-  const PING_DELAY = 50 * 60 * 1000 // 50 minutes
+  const PING_DELAY = 60 * 1000 // 50 minutes
   return setInterval(() => {
     logger.info("Pinging redis to keep connection alive")
     RedisClient.ping()
@@ -33,10 +34,12 @@ RedisClient.on("error", (error) => {
   logger.error("Redis client error: ", error)
 })
 
-RedisClient.once("connect", pingRedis)
-
 void (async () => {
   await RedisClient.connect()
+  const pingInterval = pingRedis()
+  RedisClient.on("close", () => {
+    clearInterval(pingInterval)
+  })
 })()
 
 export default RedisClient
