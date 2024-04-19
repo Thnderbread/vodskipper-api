@@ -1,6 +1,7 @@
 import Redis from "ioredis"
 import { config } from "dotenv"
 import logger from "./loggerConfig"
+import { clearInterval } from "timers"
 
 config()
 
@@ -33,10 +34,12 @@ RedisClient.on("error", (error) => {
   logger.error("Redis client error: ", error)
 })
 
-RedisClient.once("connect", pingRedis)
-
 void (async () => {
   await RedisClient.connect()
+  const pingInterval = pingRedis()
+  RedisClient.on("close", () => {
+    clearInterval(pingInterval)
+  })
 })()
 
 export default RedisClient
