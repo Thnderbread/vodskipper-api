@@ -17,7 +17,7 @@ const RedisClient = new Redis({
  * keep the connection alive.
  */
 export function pingRedis(): NodeJS.Timeout {
-  const PING_DELAY = 50 * 60 * 1000 // 50 minutes
+  const PING_DELAY = 60 * 1000 // 50 minutes
   return setInterval(() => {
     logger.info("Pinging redis to keep connection alive")
     RedisClient.ping()
