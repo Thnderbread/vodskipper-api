@@ -1,12 +1,12 @@
 import cors from "cors"
 import corsOpts from "./getCorsOpts"
 import logger from "./config/loggerConfig"
+import RedisClient from "./config/RedisClient"
 import express, { type Express } from "express"
 import searchCache from "./middleware/searchCache"
 import requestLogger from "./middleware/requestLogger"
 import validateRequest from "./middleware/verifyRequest"
 import handleMutedSegmentsRequest from "./controllers/mutedSegmentsController"
-import RedisClient from "./config/RedisClient"
 
 const app: Express = express()
 const PORT = process.env.PORT ?? 8000
@@ -38,7 +38,7 @@ if (process.env.NODE_ENV === "dev") {
 } else if (process.env.NODE_ENV === "prod") {
   app.listen(PORT, () => {
     logger.info(
-      `[server]: Server started listening on  
+      `[server]: Production server started listening on  
       port ${PORT} on ${new Date().toISOString()}`
     )
   })

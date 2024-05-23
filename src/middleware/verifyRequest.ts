@@ -15,13 +15,13 @@ function validateRequest(
   const { origin } = req.headers
   if (!vodIdRegex.test(vodID)) {
     logger.warn(
-      `Rejected request from origin ${origin} because of invalid vod id.`
+      `Rejected request from origin '${origin}' because of invalid vod id.`
     )
     res.sendStatus(404)
     return
   } else if (req.method !== "GET") {
     logger.warn(
-      `Rejected request from origin ${origin} due to invalid request method: ${req.method}`
+      `Rejected request from origin '${origin}' due to invalid request method: ${req.method}`
     )
 
     res.sendStatus(405)
