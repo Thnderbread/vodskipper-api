@@ -1,3 +1,5 @@
+import logger from "./loggerConfig"
+
 function validateOrigin(origin: string): boolean {
   const validChromeOriginRegex = /chrome-extension:\/\/\w+/
   const validFireFoxOriginRegex = /moz-extension:\/\/\w+/
@@ -12,7 +14,8 @@ const corsOptsProd = {
     if (validateOrigin(origin)) {
       callback(null, true)
     } else {
-      callback(new Error(`Origin "${origin}" is not allowed by CORS.`))
+      logger.error(`Origin "${origin}" is not allowed by CORS.`)
+      callback(new Error("Not allowed."))
     }
   },
   methods: "GET",
