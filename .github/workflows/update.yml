@@ -31,7 +31,7 @@ jobs:
           REDIS_PORT: ${{ secrets.REDIS_PORT }}
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
           # Don't merge updates to GitHub Actions versions automatically.
-        # (Some repos may wish to limit by version range (major/minor/patch), or scope (dep vs dev-dep), too.)
+
         if: contains(steps.metadata.outputs.package-ecosystem, 'npm')
         uses: lewagon/wait-on-check-action@v1.3.3
         with:
@@ -48,11 +48,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Auto-merge dependabot PRs
         # Don't merge updates to GitHub Actions versions automatically.
-        # (Some repos may wish to limit by version range (major/minor/patch), or scope (dep vs dev-dep), too.)
         if: contains(steps.metadata.outputs.package-ecosystem, 'npm')
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # The "auto" flag will only merge once all of the target branch's required checks
-        # are met. Configure those in the "branch protection" settings for each repo.
+        # The "auto" flag will only merge once all of the target branch's required checks are met.
         run: gh pr merge --auto --squash "$PR_URL"

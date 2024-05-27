@@ -1,7 +1,7 @@
 import assert from "assert"
 import request from "supertest"
 import app from "../../src/server"
-import { MutedVodSegment } from "../../src/types"
+import { type MutedVodSegment } from "../../src/types"
 import RedisClient from "../../src/config/RedisClient"
 
 const MUTEDVODID = "1780317987"
