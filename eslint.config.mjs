@@ -64,6 +64,7 @@ export default [
     ignores: [
       "dist/",
       "logs/",
+      "tests/",
       "jest.config.js",
       ".prettierrc.cjs",
       "eslint.config.mjs",
