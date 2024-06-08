@@ -42,15 +42,15 @@ jobs:
           allowed-conclusions: success # all other checks must pass, being skipped or cancelled is not sufficient
 
       - name: Approve PR
-        run: gh pr review --approve "$pr-url"
+        run: gh pr review --approve "$PR_URL"
         env:
-          pr-url: ${{ github.event.pull_request.html_url }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Auto-merge dependabot PRs
         # Don't merge updates to GitHub Actions versions automatically.
         if: contains(steps.metadata.outputs.package-ecosystem, 'npm')
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         # The "auto" flag will only merge once all of the target branch's required checks are met.
         run: gh pr merge --auto --squash "$PR_URL"
