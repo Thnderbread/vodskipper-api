@@ -1,9 +1,7 @@
 import cors from "cors"
 import corsOpts from "./getCorsOpts"
 import logger from "./config/loggerConfig"
-import RedisClient from "./config/RedisClient"
 import express, { type Express } from "express"
-import searchCache from "./middleware/searchCache"
 import requestLogger from "./middleware/requestLogger"
 import validateRequest from "./middleware/verifyRequest"
 import handleMutedSegmentsRequest from "./controllers/mutedSegmentsController"
@@ -18,7 +16,6 @@ app.use(express.json())
 app.use(
   "/vods/muted/:vodID",
   validateRequest,
-  searchCache,
   handleMutedSegmentsRequest,
   requestLogger
 )
@@ -43,10 +40,5 @@ if (process.env.NODE_ENV === "dev") {
     )
   })
 }
-
-process.on("SIGINT", () => {
-  logger.warn("[server]: Exiting due to SIGINT signal")
-  RedisClient.disconnect()
-})
 
 export default app

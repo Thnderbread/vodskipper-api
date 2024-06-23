@@ -1,8 +1,6 @@
-import assert from "assert"
 import request from "supertest"
 import app from "../../src/server"
 import { type MutedVodSegment } from "../../src/types"
-import RedisClient from "../../src/config/RedisClient"
 
 const MUTEDVODID = "1780317987"
 const INVALIDVODID = "1234756"
@@ -18,38 +16,13 @@ interface Response {
 describe("API Integration Tests", () => {
   jest.setTimeout(60_000)
 
-  afterAll(() => {
-    RedisClient.quit()
-  })
-
   it("should return a 200 status and segment data for GET /vods/muted/:id when the requested vod is found", async () => {
     const response: Response = await request(app).get(
       `/vods/muted/${MUTEDVODID}`
     )
-    await RedisClient.del(MUTEDVODID)
     expect(response.status).toBe(200)
     expect(response.body.segments).toBeInstanceOf(Array)
     expect(response.body.segments).not.toHaveLength(0)
-  })
-
-  it("should cache the response for a segment after the request.", async () => {
-    const mutedResponse = await request(app).get(`/vods/muted/${MUTEDVODID}`)
-    const mutedSegments = mutedResponse.body.segments
-    const mutedCached = await RedisClient.get(MUTEDVODID)
-    await RedisClient.del(MUTEDVODID)
-    assert.ok(mutedCached !== null)
-    const mutedParsed = JSON.parse(mutedCached)
-
-    await request(app).get(`/vods/muted/${UNMUTEDVODID}`)
-    const unmutedCached = await RedisClient.get(UNMUTEDVODID)
-    await RedisClient.del(UNMUTEDVODID)
-    if (unmutedCached === null) {
-      throw new Error("Cache miss for unmuted vod segments.")
-    }
-    const unmutedParsed = JSON.parse(unmutedCached)
-
-    expect(unmutedParsed).toMatchObject([])
-    expect(mutedParsed).toMatchObject<MutedVodSegment[]>(mutedSegments)
   })
 
   it("should return a 404 status for GET /vods/muted/:id when the requested vod is not found", async () => {
@@ -60,7 +33,6 @@ describe("API Integration Tests", () => {
 
   it("should return a 404 status for GET /vods/muted/:id when the requested vod has no muted segments", async () => {
     const response = await request(app).get(`/vods/muted/${UNMUTEDVODID}`)
-    await RedisClient.del(UNMUTEDVODID)
     expect(response.status).toBe(404)
   })
 

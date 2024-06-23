@@ -26,9 +26,6 @@ jobs:
       - name: Wait for PR CI
         env:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          REDIS_PASS: ${{ secrets.REDIS_PASS }}
-          REDIS_HOST: ${{ secrets.REDIS_HOST }}
-          REDIS_PORT: ${{ secrets.REDIS_PORT }}
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
           # Don't merge updates to GitHub Actions versions automatically.
 
